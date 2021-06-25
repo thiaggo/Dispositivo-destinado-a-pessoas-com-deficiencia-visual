@@ -1,0 +1,95 @@
+//feito para ser utilizado com Arduino Uno
+//com dois potenciometro um sensor HC-sr04
+//dois potenciometro e um buzzer
+int DistanciaLimite = 0;
+
+int cm = 0;
+int pi = 4;
+
+
+long readUltrasonicDistance(int triggerPin, int echoPin)
+{
+  pinMode(triggerPin, OUTPUT);  // Clear the trigger
+  digitalWrite(triggerPin, LOW);
+  delayMicroseconds(2);
+  // Sets the trigger pin to HIGH state for 10 microseconds
+  digitalWrite(triggerPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(triggerPin, LOW);
+  pinMode(echoPin, INPUT);
+  // Reads the echo pin, and returns the sound wave travel time in microseconds
+  return pulseIn(echoPin, HIGH);
+}
+
+void setup()
+{
+  Serial.begin(9600);
+
+  pinMode(2, OUTPUT);
+ 
+}
+
+void loop()
+{
+  //TEMPO DO DELAy
+  //valores de 0 a 1023 video conversor A/D
+  int tempo = analogRead(0);
+  //TOMNALIDADE do piezo
+  //valores de 0 a 1023 video conversor A/D
+  int tom = analogRead(1);
+  // set threshold distance to activate piezo
+  DistanciaLimite = 400;
+  // measure the ping time in cm
+  cm = 0.01723 * readUltrasonicDistance(7, 6);
+  
+  
+  Serial.print(cm);
+  Serial.println("cm, ");
+  
+  if (cm > DistanciaLimite) {
+    noTone (pi);
+    delay (100);
+  }
+  if (cm <= DistanciaLimite && cm > DistanciaLimite - 100) {
+    
+    noTone (pi);
+  }
+  if (cm <= DistanciaLimite - 100 && cm > DistanciaLimite - 250) {
+   tone (pi,tom +200);
+  delay (150);
+    noTone (pi);
+    
+    
+  }
+  if (cm <= DistanciaLimite - 250 && cm > DistanciaLimite - 350) {
+    
+    
+    noTone (pi);
+    delay (50);
+    tone (pi, tom +400);
+    delay (200);
+    noTone (pi);
+    delay (300);
+    tone (pi, tom +400);
+    delay (200);
+    noTone (pi);
+  }
+  if (cm <= DistanciaLimite - 350) {
+    
+    
+    noTone (pi);
+    delay (50);
+    tone (pi,tom +600);
+    delay (250);
+    noTone (pi);
+    delay (100);
+   tone (pi,tom +600);
+    delay (250);
+    noTone (pi);
+    delay (100);
+    tone (pi,tom +600);
+    delay (300);
+    noTone (pi);
+    
+  }
+  delay(tempo*4); }
